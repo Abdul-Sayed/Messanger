@@ -9,7 +9,9 @@ import fetcher from "../utils/fetchMessages";
 
 function ChatInput() {
   const [input, setInput] = useState("");
-  const { data: messages, error, mutate } = useSWR(`/api/addMessage`, fetcher);
+
+  // Get all the messages, store it in messages variable
+  const { data: messages, error, mutate } = useSWR(`/api/getMessages`, fetcher);
 
   console.log("messages:", messages);
 
@@ -26,11 +28,11 @@ function ChatInput() {
     e.preventDefault();
     if (!input) return;
 
-    setInput("");
+    const messageToSend = input;
 
     const messageData: messageType = {
       id: uuidv4(),
-      message: input,
+      message: messageToSend,
       created_at: Date.now(),
       user_name: "Elon Musk",
       profile_pic:
@@ -38,8 +40,13 @@ function ChatInput() {
       email: "dnr@gmail.com",
     };
 
+    setInput("");
+
+    console.log(messageData);
+
+    // Post the message to Upstash database
     const uploadMessageToUpstash = async () => {
-      const data = await fetch("/api/addMessage", {
+      const messageObj = await fetch("/api/addMessage", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -49,11 +56,11 @@ function ChatInput() {
         }),
       }).then((res) => res.json());
 
-      console.log("data:", data);
-      const message = data.messageData;
-      return [message, ...messages!];
+      console.log("data:", messageObj);
+      return [messageObj.messageData, ...messages!];
     };
 
+    // Initially use the client side messageData, then replace it with the server returned one
     await mutate(uploadMessageToUpstash, {
       optimisticData: [messageData, ...messages!],
       rollbackOnError: true,

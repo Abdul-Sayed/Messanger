@@ -17,7 +17,13 @@ const Header = () => {
     return (
       <header className="sticky top-0 z-50 bg-white flex justify-between items-center p-10 shadow-sm">
         <div className="flex space-x-2">
-          <Image src={session.user.image} alt="Profile picture" height={10} width={50} />
+          <Image
+            src={session.user.image}
+            alt="Profile picture"
+            height={10}
+            width={50}
+            className="rounded-full mx-2 object-contain"
+          />
           <div>
             <p className="text-blue-400">Logged in as:</p>
             <p className="font-bold text-lg">{session.user.name}</p>

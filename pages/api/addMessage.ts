@@ -15,9 +15,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
     return;
   }
   const { messageData } = req.body;
-  // Replace the timestamp of the user with that of the server
+  // Replace the timestamp of the user with that of the server, for global time syncing
   const newMessage = { ...messageData, created_at: Date.now() };
-  // send the message to Upstash
+  console.log(newMessage);
+  // send the message to Upstash as a hash, with the message id as the key
   redis.hset("messages", newMessage.id, JSON.stringify(newMessage));
   res.status(200).json({ messageData: newMessage });
 }
