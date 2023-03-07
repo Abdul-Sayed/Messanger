@@ -9,7 +9,7 @@ import fetcher from "../utils/fetchMessages";
 
 function ChatInput() {
   const [input, setInput] = useState("");
-  const { data: messages, error, mutate } = useSWR(`/api/addMessage`, fetcher);
+  const { data: messages, error, mutate } = useSWR(`/api/getMessages`, fetcher);
 
   console.log("messages:", messages);
 
