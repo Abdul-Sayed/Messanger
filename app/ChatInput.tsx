@@ -11,7 +11,7 @@ function ChatInput() {
   const [input, setInput] = useState("");
 
   // Get all the messages, store it in messages variable
-  const { data: messages, error, mutate } = useSWR(`/api/getMessages`, fetcher);
+  const { data: messages, error, mutate } = useSWR<messageType[]>("allMessages", fetcher);
 
   console.log("messages:", messages);
 
@@ -29,7 +29,6 @@ function ChatInput() {
     if (!input) return;
 
     const messageToSend = input;
-
     const messageData: messageType = {
       id: uuidv4(),
       message: messageToSend,
@@ -39,7 +38,6 @@ function ChatInput() {
         "https://imgs.search.brave.com/b4AP8Mbimaqili-ROmz9HJNBHzP25aRVbQzn3EeErGU/rs:fit:800:450:1/g:ce/aHR0cHM6Ly9pY2hl/Zi5iYmNpLmNvLnVr/L25ld3MvODAwL2Nw/c3Byb2RwYi83NzI3/L3Byb2R1Y3Rpb24v/XzEwMzMzMDUwM19t/dXNrMy5qcGc",
       email: "dnr@gmail.com",
     };
-
     setInput("");
 
     console.log(messageData);
@@ -57,10 +55,11 @@ function ChatInput() {
       }).then((res) => res.json());
 
       console.log("data:", messageObj);
-      return [messageObj.messageData, ...messages!];
+      const newMessage = messageObj.messageData;
+      return [newMessage, ...messages!];
     };
 
-    // Initially use the client side messageData, then replace it with the server returned one
+    // Mutate the SWR cache. Initially use the client side messageData, then replace it with the server returned newMessage.
     await mutate(uploadMessageToUpstash, {
       optimisticData: [messageData, ...messages!],
       rollbackOnError: true,

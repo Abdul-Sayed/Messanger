@@ -1,5 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import redis from "../../redis";
+import { serverPusher } from "../../pusher";
 import { messageType } from "../../typings";
 
 type Data = {
@@ -19,6 +20,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
   const newMessage = { ...messageData, created_at: Date.now() };
   console.log(newMessage);
   // send the message to Upstash as a hash, with the message id as the key
-  redis.hset("messages", newMessage.id, JSON.stringify(newMessage));
+  await redis.hset("messages", newMessage.id, JSON.stringify(newMessage));
+  // ping Pusher to let all subscribers know a message has been sent
+  serverPusher.trigger("messages", "new-message", newMessage);
+
   res.status(200).json({ messageData: newMessage });
 }
