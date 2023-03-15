@@ -16,8 +16,8 @@ export default async function SignInPage() {
       <div>
         <Image
           className="rounded-full mx-2 object-cover"
-          width={600}
-          height={600}
+          width={500}
+          height={500}
           src="https://static.xx.fbcdn.net/rsrc.php/v3/y2/r/yvbOx5two0W.png"
           alt="FB logo"
         />
