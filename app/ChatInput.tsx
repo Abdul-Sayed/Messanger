@@ -6,8 +6,10 @@ import _debounce from "lodash.debounce";
 import { v4 as uuidv4 } from "uuid";
 import { messageType } from "../typings";
 import fetcher from "../utils/fetchMessages";
+import { useSession } from "next-auth/react";
 
 function ChatInput() {
+  const { data: session } = useSession();
   const [input, setInput] = useState("");
 
   // Get all the messages, store it in messages variable
@@ -15,28 +17,18 @@ function ChatInput() {
 
   console.log("messages:", messages);
 
-  const session = {
-    user: {
-      authenticated: true,
-      name: "Pajhman",
-      image:
-        "https://cdn.freebiesupply.com/logos/large/2x/facebook-messenger-logo-png-transparent.png",
-    },
-  };
-
   async function addMessage(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    if (!input) return;
+    if (!input || !session?.user?.name) return;
 
     const messageToSend = input;
     const messageData: messageType = {
       id: uuidv4(),
       message: messageToSend,
       created_at: Date.now(),
-      user_name: "Elon Musk",
-      profile_pic:
-        "https://imgs.search.brave.com/b4AP8Mbimaqili-ROmz9HJNBHzP25aRVbQzn3EeErGU/rs:fit:800:450:1/g:ce/aHR0cHM6Ly9pY2hl/Zi5iYmNpLmNvLnVr/L25ld3MvODAwL2Nw/c3Byb2RwYi83NzI3/L3Byb2R1Y3Rpb24v/XzEwMzMzMDUwM19t/dXNrMy5qcGc",
-      email: "dnr@gmail.com",
+      user_name: session?.user?.name!,
+      profile_pic: session?.user?.image!,
+      email: session?.user?.email!,
     };
     setInput("");
 
@@ -73,6 +65,7 @@ function ChatInput() {
     >
       <input
         type="text"
+        disabled={!session?.user?.name}
         value={input}
         placeholder="Enter message..."
         onChange={(e) => setInput(e.target.value)}

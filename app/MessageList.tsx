@@ -7,11 +7,14 @@ import { messageType } from "../typings";
 import MessageComponent from "./MessageComponent";
 import { clientPusher } from "../pusher";
 
-function MessageList() {
+type Props = {
+  initialMessages: messageType[];
+};
+function MessageList({ initialMessages }: Props) {
   // Get the messages from the SWR catch via key 'allMessages'
   const { data: messages, error, mutate } = useSWR<messageType[]>("allMessages", fetcher);
 
-  // Subscribe to pusher on the client, which lets all subscribers know when a message is added
+  // Subscribe to pusher on the client
   // Update SWR cache with the newly added message from pusher
   useEffect(() => {
     const channel = clientPusher.subscribe("messages");
@@ -23,16 +26,22 @@ function MessageList() {
         await mutate(fetcher);
       } else {
         await mutate(fetcher, {
+          // If messages from SWR are available, optimistically render the message from pusher first
           optimisticData: [pushedMessage, ...messages!],
           rollbackOnError: true,
         });
       }
     });
+    return () => {
+      channel.unbind_all();
+      channel.unsubscribe();
+      ("");
+    };
   }, [messages, mutate, clientPusher]);
 
   return (
     <div className="space-y-5 px-5 pt-8 pb-32 max-w-2xl xl:max-w-4xl mx-auto">
-      {messages?.map((message) => (
+      {(messages || initialMessages).map((message) => (
         <MessageComponent key={message.id} message={message} />
       ))}
     </div>

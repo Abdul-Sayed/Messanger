@@ -22,7 +22,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
   // send the message to Upstash as a hash, with the message id as the key
   await redis.hset("messages", newMessage.id, JSON.stringify(newMessage));
   // ping Pusher to let all subscribers know a message has been sent
-  serverPusher.trigger("messages", "new-message", newMessage);
+  await serverPusher.trigger("messages", "new-message", newMessage);
 
   res.status(200).json({ messageData: newMessage });
 }

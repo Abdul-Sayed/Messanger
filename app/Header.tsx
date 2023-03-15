@@ -1,24 +1,21 @@
-import React from "react";
+// "use client";
+
 import Image from "next/image";
 import Link from "next/link";
 import LogoutButton from "./LogoutButton";
+import { getServerSession } from "next-auth/next";
+// import { useSession } from "next-auth/react";
 
-const Header = () => {
-  const session = {
-    user: {
-      authenticated: true,
-      name: "Pajhman",
-      image:
-        "https://cdn.freebiesupply.com/logos/large/2x/facebook-messenger-logo-png-transparent.png",
-    },
-  };
+async function Header() {
+  const session = await getServerSession();
+  // const { data: session } = useSession();
 
-  if (session.user.authenticated) {
+  if (session && session?.user) {
     return (
       <header className="sticky top-0 z-50 bg-white flex justify-between items-center p-10 shadow-sm">
         <div className="flex space-x-2">
           <Image
-            src={session.user.image}
+            src={session?.user?.image!}
             alt="Profile picture"
             height={10}
             width={50}
@@ -26,7 +23,7 @@ const Header = () => {
           />
           <div>
             <p className="text-blue-400">Logged in as:</p>
-            <p className="font-bold text-lg">{session.user.name}</p>
+            <p className="font-bold text-lg">{session?.user.name}</p>
           </div>
         </div>
         <LogoutButton />
@@ -57,6 +54,6 @@ const Header = () => {
       </div>
     </header>
   );
-};
+}
 
 export default Header;

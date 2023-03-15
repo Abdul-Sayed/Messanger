@@ -1,11 +1,15 @@
 import { messageType } from "../typings";
 import Image from "next/image";
+import { useSession } from "next-auth/react";
+import TimeAgo from "react-timeago";
 
-type props = {
+type Props = {
   message: messageType;
 };
-const MessageComponent = ({ message }: props) => {
-  const isUser = true;
+const MessageComponent = ({ message }: Props) => {
+  // Grab client side session since the parent is client side component
+  const { data: session } = useSession();
+  const isUser = session?.user?.email == message.email;
 
   return (
     <div className={`flex w-fit ${isUser && "ml-auto"}`}>
@@ -29,14 +33,14 @@ const MessageComponent = ({ message }: props) => {
         </p>
         <div className="flex items-end">
           <div
-            className={`px-3 py-2 rounded-lg w-fit text-white ${
+            className={`px-3 py-2 rounded-lg w-fit ${
               isUser ? "text-blue-400 text-right" : "text-red-400 text-left"
             }`}
           >
             <p>{message.message}</p>
           </div>
           <p className={`text-[0.65rem] italic px-2 text-gray-300 ${isUser && "order-(-1)"}`}>
-            {new Date(message.created_at).toLocaleString()}
+            <TimeAgo date={new Date(message.created_at)} />
           </p>
         </div>
       </div>

@@ -5,6 +5,14 @@ module.exports = {
     appDir: true,
   },
   images: {
-    domains: ["cdn.freebiesupply.com", "imgs.search.brave.com"],
+    domains: [
+      "cdn.freebiesupply.com",
+      "imgs.search.brave.com",
+      "fbcdn.net",
+      "fbsbx.com",
+      "static.xx.fbcdn.net",
+      "scontent-lax3-2.xx.fbcdn.net",
+      "platform-lookaside.fbsbx.com",
+    ],
   },
 };
