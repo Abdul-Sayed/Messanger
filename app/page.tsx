@@ -9,7 +9,7 @@ const Home = async () => {
   const session = await getServerSession();
 
   const data = await fetch(
-    `${process.env.VERCEL_URL || "http://localhost:3000/"}/api/getMessages`
+    `${process.env.VERCEL_URL || "http://localhost:3000"}/api/getMessages`
   ).then((res) => res.json());
 
   const messages: messageType[] = data.messages;
