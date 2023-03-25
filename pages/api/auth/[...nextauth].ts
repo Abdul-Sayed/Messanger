@@ -7,9 +7,7 @@ export const authOptions = {
       clientSecret: process.env.Facebook_SECRET!,
     }),
   ],
-  pages: {
-    signIn: "/auth/signin",
-  },
+
   secret: process.env.NEXTAUTH_SECRET!,
 };
 export default NextAuth(authOptions);

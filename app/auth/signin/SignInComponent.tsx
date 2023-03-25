@@ -15,11 +15,7 @@ export default function SignInComponent({ providers }: Props) {
         <div key={provider.name}>
           <button
             className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-            onClick={() =>
-              signIn(provider.id, {
-                callbackUrl: process.env.CALLBACK_URL || "http://localhost:3000",
-              })
-            }
+            onClick={() => signIn()}
           >
             Sign in with {provider.name}
           </button>
